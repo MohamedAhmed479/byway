@@ -12,12 +12,14 @@ class FavoriteModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [];
+    protected $allowedFields    = ["user_id", "course_id", "added_at"];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
-    protected array $casts = [];
+    protected array $casts = [
+        "added_at" => "datetime",
+    ];
     protected array $castHandlers = [];
 
     // Dates
@@ -43,4 +45,7 @@ class FavoriteModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+
+
 }
