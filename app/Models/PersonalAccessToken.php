@@ -108,4 +108,31 @@ class PersonalAccessToken extends Model
     }
 
 
+    public function createToken(int $userId, string $name, array $abilities = [], ?string $expiresAt = null): array
+    {
+        $plainTextToken = bin2hex(random_bytes(32)); // 64 characters
+        $hashedToken = hash('sha256', $plainTextToken);
+
+        $tokenData = [
+            'tokenable_type' => 'App\\Models\\User',
+            'tokenable_id'   => $userId,
+            'name'           => $name,
+            'token'          => $hashedToken,
+            'abilities'      => $abilities,
+            'expires_at'     => $expiresAt,
+        ];
+
+        if ($this->save($tokenData)) {
+            $tokenId = $this->getInsertID();
+            return [
+                'id' => $tokenId,
+                'plain_text_token' => $plainTextToken,
+                'expires_at' => $expiresAt,
+            ];
+        }
+
+        return [];
+    }
+
+
 }

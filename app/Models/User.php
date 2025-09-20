@@ -97,16 +97,78 @@ class User extends Model
         $otp = random_int(100000, 999999);
         $userKey = "otp_" . $otp;
 
-        cache()->save($userKey, password_hash($otp, PASSWORD_DEFAULT), 300);
+        $cacheData = [
+            'email' => $email,
+            'otp_hash' => password_hash($otp, PASSWORD_DEFAULT)
+        ];
+        
+        cache()->save($userKey, $cacheData, 300);
+
+        $user = $this->where('email', $email)->first();
+        $username = $user ? $user['name'] : 'User';
 
         $body = view('emails/verification', [
             'otp' => $otp,
-            'username' => $this->name
+            'username' => $username
         ]);
 
         $mailer = new EmailManager();
-        if($mailer->send($email, "Verify Email", $body, "system@byway.com", env("app.Name"))) {
+        if($mailer->send($email, "Verify Email", $body, env("system.email"), env("app.Name"))) {
             return true;
+        }
+
+        return false;
+    }
+
+    public function sendForgotPasswordCode(string $email)
+    {
+        $otp = random_int(100000, 999999);
+        $userKey = "otp_" . $otp;
+
+        $cacheData = [
+            'email' => $email,
+            'otp_hash' => password_hash($otp, PASSWORD_DEFAULT)
+        ];
+
+        cache()->save($userKey, $cacheData, 300);
+
+        $user = $this->where('email', $email)->first();
+        $username = $user ? $user['name'] : 'User';
+
+        $body = view('emails/forgot_password', [
+            'otp' => $otp,
+            'username' => $username
+        ]);
+
+        $mailer = new EmailManager();
+        if($mailer->send($email, "Forgot Password", $body, env("system.email"), env("app.Name"))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function verifyOtp(string $email, string $otp): bool
+    {
+        $cacheKeys = [];
+        $cacheDir = WRITEPATH . 'cache/';
+        
+        if (is_dir($cacheDir)) {
+            $files = glob($cacheDir . 'otp_*');
+            foreach ($files as $file) {
+                $cacheKeys[] = basename($file);
+            }
+        }
+
+        foreach ($cacheKeys as $key) {
+            $cachedData = cache()->get($key);
+            
+            if ($cachedData && isset($cachedData['email']) && $cachedData['email'] === $email) {
+                if (password_verify($otp, $cachedData['otp_hash'])) {
+                    cache()->delete($key);
+                    return true;
+                }
+            }
         }
 
         return false;
