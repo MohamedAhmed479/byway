@@ -8,7 +8,7 @@ class PaymentMethodModel extends Model
 {
     protected $table            = 'payment_methods';
     protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
