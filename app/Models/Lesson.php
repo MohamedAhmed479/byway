@@ -4,24 +4,24 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PaymentMethodModel extends Model
+class Lesson extends Model
 {
-    protected $table            = 'payment_methods';
+    protected $table            = 'lessons';
     protected $primaryKey       = 'id';
-    protected $useAutoIncrement = false;
+    protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'id', 'user_id', 'type', 'details', 'is_default'
+        'course_id', 'title', 'video_url', 'duration', 'order'
     ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
     protected array $casts = [
-        'details' => 'json',
-        'is_default' => 'boolean',
+        'duration' => 'decimal',
+        'order' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
@@ -36,29 +36,31 @@ class PaymentMethodModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'id' => 'required|max_length[255]|is_unique[payment_methods.id,id,{id}]',
-        'user_id' => 'required|numeric|is_not_unique[users.id]',
-        'type' => 'required|max_length[50]',
-        'details' => 'permit_empty',
-        'is_default' => 'permit_empty|in_list[0,1]'
+        'course_id' => 'required|numeric|is_not_unique[courses.id]',
+        'title' => 'required|min_length[3]|max_length[255]',
+        'video_url' => 'permit_empty|max_length[255]',
+        'duration' => 'permit_empty|decimal|greater_than_equal_to[0]',
+        'order' => 'required|numeric|greater_than[0]'
     ];
     protected $validationMessages   = [
-        'id' => [
-            'required' => 'Payment method ID is required',
-            'max_length' => 'Payment method ID cannot exceed 255 characters',
-            'is_unique' => 'This payment method ID already exists'
+        'course_id' => [
+            'required' => 'Course is required',
+            'numeric' => 'Course ID must be a number',
+            'is_not_unique' => 'Selected course does not exist'
         ],
-        'user_id' => [
-            'required' => 'User is required',
-            'numeric' => 'User ID must be a number',
-            'is_not_unique' => 'Selected user does not exist'
+        'title' => [
+            'required' => 'Lesson title is required',
+            'min_length' => 'Lesson title must be at least 3 characters long',
+            'max_length' => 'Lesson title cannot exceed 255 characters'
         ],
-        'type' => [
-            'required' => 'Payment method type is required',
-            'max_length' => 'Type cannot exceed 50 characters'
+        'duration' => [
+            'decimal' => 'Duration must be a valid decimal number',
+            'greater_than_equal_to' => 'Duration cannot be negative'
         ],
-        'is_default' => [
-            'in_list' => 'Is default must be 0 or 1'
+        'order' => [
+            'required' => 'Lesson order is required',
+            'numeric' => 'Order must be a number',
+            'greater_than' => 'Order must be greater than 0'
         ]
     ];
     protected $skipValidation       = false;

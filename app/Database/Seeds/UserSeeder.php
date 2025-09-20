@@ -4,7 +4,7 @@ namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
 use CodeIgniter\Test\Fabricator;
-use App\Models\UserModel;
+use App\Models\User;
 
 class UserSeeder extends Seeder
 {

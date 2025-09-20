@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class WithdrawalsModel extends Model
+class Withdrawals extends Model
 {
     protected $table            = 'withdrawals';
     protected $primaryKey       = 'id';

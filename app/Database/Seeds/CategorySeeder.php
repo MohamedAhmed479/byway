@@ -3,7 +3,7 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\CategoryModel;
+use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {

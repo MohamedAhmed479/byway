@@ -3,19 +3,19 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\ReviewModel;
-use App\Models\EnrollmentModel;
-use App\Models\UserModel;
-use App\Models\CourseModel;
+use App\Models\Review;
+use App\Models\Enrollment;
+use App\Models\User;
+use App\Models\Course;
 
 class ReviewSeeder extends Seeder
 {
     public function run()
     {
-        $reviewModel = new ReviewModel();
-        $enrollmentModel = new EnrollmentModel();
-        $userModel = new UserModel();
-        $courseModel = new CourseModel();
+        $reviewModel = new Review();
+        $enrollmentModel = new Enrollment();
+        $userModel = new User();
+        $courseModel = new Course();
         
         // Get enrollments where progress > 50% (users who have made significant progress)
         $db = \Config\Database::connect();

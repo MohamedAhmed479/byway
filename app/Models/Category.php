@@ -4,28 +4,29 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class CartItemModel extends Model
+class Category extends Model
 {
-    protected $table            = 'carts';
+    protected $table            = 'categories';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'user_id', 'course_id', 'added_at'
+        'name', 'description', 'parent_id'
     ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
     protected array $casts = [
-        'added_at' => 'datetime'
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
@@ -33,20 +34,20 @@ class CartItemModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'user_id' => 'required|numeric|is_not_unique[users.id]',
-        'course_id' => 'required|numeric|is_not_unique[courses.id]',
-        'added_at' => 'permit_empty|valid_date'
+        'name' => 'required|min_length[2]|max_length[100]|is_unique[categories.name,id,{id}]',
+        'description' => 'permit_empty',
+        'parent_id' => 'permit_empty|numeric|is_not_unique[categories.id]'
     ];
     protected $validationMessages   = [
-        'user_id' => [
-            'required' => 'User is required',
-            'numeric' => 'User ID must be a number',
-            'is_not_unique' => 'Selected user does not exist'
+        'name' => [
+            'required' => 'Category name is required',
+            'min_length' => 'Category name must be at least 2 characters long',
+            'max_length' => 'Category name cannot exceed 100 characters',
+            'is_unique' => 'This category name already exists'
         ],
-        'course_id' => [
-            'required' => 'Course is required',
-            'numeric' => 'Course ID must be a number',
-            'is_not_unique' => 'Selected course does not exist'
+        'parent_id' => [
+            'numeric' => 'Parent ID must be a number',
+            'is_not_unique' => 'Parent category does not exist'
         ]
     ];
     protected $skipValidation       = false;

@@ -4,24 +4,23 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class LessonModel extends Model
+class Review extends Model
 {
-    protected $table            = 'lessons';
+    protected $table            = 'reviews';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'course_id', 'title', 'video_url', 'duration', 'order'
+        'course_id', 'learner_id', 'rating', 'comment'
     ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
     protected array $casts = [
-        'duration' => 'decimal',
-        'order' => 'integer',
+        'rating' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
@@ -37,10 +36,9 @@ class LessonModel extends Model
     // Validation
     protected $validationRules      = [
         'course_id' => 'required|numeric|is_not_unique[courses.id]',
-        'title' => 'required|min_length[3]|max_length[255]',
-        'video_url' => 'permit_empty|max_length[255]',
-        'duration' => 'permit_empty|decimal|greater_than_equal_to[0]',
-        'order' => 'required|numeric|greater_than[0]'
+        'learner_id' => 'required|numeric|is_not_unique[users.id]',
+        'rating' => 'required|integer|greater_than[0]|less_than_equal_to[5]',
+        'comment' => 'permit_empty'
     ];
     protected $validationMessages   = [
         'course_id' => [
@@ -48,19 +46,16 @@ class LessonModel extends Model
             'numeric' => 'Course ID must be a number',
             'is_not_unique' => 'Selected course does not exist'
         ],
-        'title' => [
-            'required' => 'Lesson title is required',
-            'min_length' => 'Lesson title must be at least 3 characters long',
-            'max_length' => 'Lesson title cannot exceed 255 characters'
+        'learner_id' => [
+            'required' => 'Learner is required',
+            'numeric' => 'Learner ID must be a number',
+            'is_not_unique' => 'Selected learner does not exist'
         ],
-        'duration' => [
-            'decimal' => 'Duration must be a valid decimal number',
-            'greater_than_equal_to' => 'Duration cannot be negative'
-        ],
-        'order' => [
-            'required' => 'Lesson order is required',
-            'numeric' => 'Order must be a number',
-            'greater_than' => 'Order must be greater than 0'
+        'rating' => [
+            'required' => 'Rating is required',
+            'integer' => 'Rating must be a whole number',
+            'greater_than' => 'Rating must be at least 1',
+            'less_than_equal_to' => 'Rating cannot exceed 5'
         ]
     ];
     protected $skipValidation       = false;

@@ -4,22 +4,24 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class CategoryModel extends Model
+class PaymentMethod extends Model
 {
-    protected $table            = 'categories';
+    protected $table            = 'payment_methods';
     protected $primaryKey       = 'id';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'name', 'description', 'parent_id'
+        'id', 'user_id', 'type', 'details', 'is_default'
     ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
     protected array $casts = [
+        'details' => 'json',
+        'is_default' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
@@ -34,20 +36,29 @@ class CategoryModel extends Model
 
     // Validation
     protected $validationRules      = [
-        'name' => 'required|min_length[2]|max_length[100]|is_unique[categories.name,id,{id}]',
-        'description' => 'permit_empty',
-        'parent_id' => 'permit_empty|numeric|is_not_unique[categories.id]'
+        'id' => 'required|max_length[255]|is_unique[payment_methods.id,id,{id}]',
+        'user_id' => 'required|numeric|is_not_unique[users.id]',
+        'type' => 'required|max_length[50]',
+        'details' => 'permit_empty',
+        'is_default' => 'permit_empty|in_list[0,1]'
     ];
     protected $validationMessages   = [
-        'name' => [
-            'required' => 'Category name is required',
-            'min_length' => 'Category name must be at least 2 characters long',
-            'max_length' => 'Category name cannot exceed 100 characters',
-            'is_unique' => 'This category name already exists'
+        'id' => [
+            'required' => 'Payment method ID is required',
+            'max_length' => 'Payment method ID cannot exceed 255 characters',
+            'is_unique' => 'This payment method ID already exists'
         ],
-        'parent_id' => [
-            'numeric' => 'Parent ID must be a number',
-            'is_not_unique' => 'Parent category does not exist'
+        'user_id' => [
+            'required' => 'User is required',
+            'numeric' => 'User ID must be a number',
+            'is_not_unique' => 'Selected user does not exist'
+        ],
+        'type' => [
+            'required' => 'Payment method type is required',
+            'max_length' => 'Type cannot exceed 50 characters'
+        ],
+        'is_default' => [
+            'in_list' => 'Is default must be 0 or 1'
         ]
     ];
     protected $skipValidation       = false;

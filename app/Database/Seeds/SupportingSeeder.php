@@ -3,16 +3,16 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\FavoriteModel;
-use App\Models\CartItemModel;
-use App\Models\NotificationModel;
-use App\Models\LessonCompletionModel;
-use App\Models\PaymentMethodModel;
-use App\Models\WithdrawalsModel;
-use App\Models\UserModel;
-use App\Models\CourseModel;
-use App\Models\EnrollmentModel;
-use App\Models\LessonModel;
+use App\Models\Favorite;
+use App\Models\CartItem;
+use App\Models\Notification;
+use App\Models\LessonCompletion;
+use App\Models\PaymentMethod;
+use App\Models\Withdrawals;
+use App\Models\User;
+use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\Lesson;
 
 class SupportingSeeder extends Seeder
 {
@@ -28,9 +28,9 @@ class SupportingSeeder extends Seeder
     
     private function createFavorites()
     {
-        $favoriteModel = new FavoriteModel();
-        $userModel = new UserModel();
-        $courseModel = new CourseModel();
+        $favoriteModel = new Favorite();
+        $userModel = new User();
+        $courseModel = new Course();
         
         $db = \Config\Database::connect();
         $learners = $db->table('users')->where('role', 'learner')->get()->getResultArray();
@@ -74,10 +74,10 @@ class SupportingSeeder extends Seeder
     
     private function createCartItems()
     {
-        $cartModel = new CartItemModel();
-        $userModel = new UserModel();
-        $courseModel = new CourseModel();
-        $enrollmentModel = new EnrollmentModel();
+        $cartModel = new CartItem();
+        $userModel = new User();
+        $courseModel = new Course();
+        $enrollmentModel = new Enrollment();
         
         $db = \Config\Database::connect();
         $learners = $db->table('users')->where('role', 'learner')->get()->getResultArray();
@@ -141,9 +141,9 @@ class SupportingSeeder extends Seeder
     
     private function createNotifications()
     {
-        $notificationModel = new NotificationModel();
-        $userModel = new UserModel();
-        $enrollmentModel = new EnrollmentModel();
+        $notificationModel = new Notification();
+        $userModel = new User();
+        $enrollmentModel = new Enrollment();
         
         $db = \Config\Database::connect();
         $users = $db->table('users')->get()->getResultArray();
@@ -199,9 +199,9 @@ class SupportingSeeder extends Seeder
     
     private function createLessonCompletions()
     {
-        $lessonCompletionModel = new LessonCompletionModel();
-        $enrollmentModel = new EnrollmentModel();
-        $lessonModel = new LessonModel();
+        $lessonCompletionModel = new LessonCompletion();
+        $enrollmentModel = new Enrollment();
+        $lessonModel = new Lesson();
         
         $db = \Config\Database::connect();
         $enrollments = $db->table('enrollments')->where('progress >', 0)->get()->getResultArray();
@@ -258,8 +258,8 @@ class SupportingSeeder extends Seeder
     
     private function createPaymentMethods()
     {
-        $paymentMethodModel = new PaymentMethodModel();
-        $userModel = new UserModel();
+        $paymentMethodModel = new PaymentMethod();
+        $userModel = new User();
         
         $db = \Config\Database::connect();
         $users = $db->table('users')->get()->getResultArray();
@@ -322,8 +322,8 @@ class SupportingSeeder extends Seeder
     
     private function createWithdrawals()
     {
-        $withdrawalModel = new WithdrawalsModel();
-        $userModel = new UserModel();
+        $withdrawalModel = new Withdrawals();
+        $userModel = new User();
         
         $db = \Config\Database::connect();
         $instructors = $db->table('users')->where('role', 'instructor')->get()->getResultArray();

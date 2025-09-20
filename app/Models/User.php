@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Libraries\EmailManager;
 use CodeIgniter\Model;
 
-class UserModel extends Model
+class User extends Model
 {
     protected $table            = 'users';
     protected $primaryKey       = 'id';
@@ -21,11 +22,11 @@ class UserModel extends Model
     protected bool $updateOnlyChanged = true;
 
     protected array $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => '?datetime',
         'social_links' => 'json',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
+        'updated_at' => '?datetime',
+        'deleted_at' => '?datetime'
     ];
     protected array $castHandlers = [];
 
@@ -90,4 +91,25 @@ class UserModel extends Model
         }
         return $data;
     }
+
+    public function sendEmailVerificationNotification(string $email)
+    {
+        $otp = random_int(100000, 999999);
+        $userKey = "otp_" . $otp;
+
+        cache()->save($userKey, password_hash($otp, PASSWORD_DEFAULT), 300);
+
+        $body = view('emails/verification', [
+            'otp' => $otp,
+            'username' => $this->name
+        ]);
+
+        $mailer = new EmailManager();
+        if($mailer->send($email, "Verify Email", $body, "system@byway.com", env("app.Name"))) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

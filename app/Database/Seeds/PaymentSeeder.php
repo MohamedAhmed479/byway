@@ -3,21 +3,21 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\PaymentModel;
-use App\Models\PaymentItemModel;
-use App\Models\EnrollmentModel;
-use App\Models\CourseModel;
-use App\Models\UserModel;
+use App\Models\Payment;
+use App\Models\PaymentItem;
+use App\Models\Enrollment;
+use App\Models\Course;
+use App\Models\User;
 
 class PaymentSeeder extends Seeder
 {
     public function run()
     {
-        $paymentModel = new PaymentModel();
-        $paymentItemModel = new PaymentItemModel();
-        $enrollmentModel = new EnrollmentModel();
-        $courseModel = new CourseModel();
-        $userModel = new UserModel();
+        $paymentModel = new Payment();
+        $paymentItemModel = new PaymentItem();
+        $enrollmentModel = new Enrollment();
+        $courseModel = new Course();
+        $userModel = new User();
         
         // Get all enrollments (these represent purchases)
         $db = \Config\Database::connect();

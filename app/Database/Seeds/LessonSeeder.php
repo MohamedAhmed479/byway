@@ -3,15 +3,15 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\LessonModel;
-use App\Models\CourseModel;
+use App\Models\Lesson;
+use App\Models\Course;
 
 class LessonSeeder extends Seeder
 {
     public function run()
     {
-        $lessonModel = new LessonModel();
-        $courseModel = new CourseModel();
+        $lessonModel = new Lesson();
+        $courseModel = new Course();
         
         // Get all published courses using database builder
         $db = \Config\Database::connect();

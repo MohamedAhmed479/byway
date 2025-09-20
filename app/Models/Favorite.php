@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class FavoriteModel extends Model
+class Favorite extends Model
 {
     protected $table            = 'favorites';
     protected $primaryKey       = 'id';

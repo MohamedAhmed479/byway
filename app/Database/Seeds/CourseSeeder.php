@@ -3,17 +3,17 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\CourseModel;
-use App\Models\UserModel;
-use App\Models\CategoryModel;
+use App\Models\Course;
+use App\Models\User;
+use App\Models\Category;
 
 class CourseSeeder extends Seeder
 {
     public function run()
     {
-        $courseModel = new CourseModel();
-        $userModel = new UserModel();
-        $categoryModel = new CategoryModel();
+        $courseModel = new Course();
+        $userModel = new User();
+        $categoryModel = new Category();
         
         // Get instructors using database builder
         $db = \Config\Database::connect();
