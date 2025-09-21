@@ -26,6 +26,7 @@ class CreateCategoryTable extends Migration
             "parent_id" => [
                 "type" => "BIGINT",
                 "unsigned" => true,
+                "null" => true,
             ],
             "created_at" => [
                 "type" => "DATETIME",

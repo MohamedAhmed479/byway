@@ -19,32 +19,32 @@ class CategorySeeder extends Seeder
             [
                 'name' => 'Programming & Development',
                 'description' => 'Learn programming languages, frameworks, and software development practices.',
-                'parent_id' => 0
+                'parent_id' => null
             ],
             [
                 'name' => 'Design & Creativity',
                 'description' => 'Master visual design, user experience, and creative skills.',
-                'parent_id' => 0
+                'parent_id' => null
             ],
             [
                 'name' => 'Business & Marketing',
                 'description' => 'Develop business acumen, marketing strategies, and entrepreneurial skills.',
-                'parent_id' => 0
+                'parent_id' => null
             ],
             [
                 'name' => 'Data Science & Analytics',
                 'description' => 'Learn data analysis, machine learning, and statistical methods.',
-                'parent_id' => 0
+                'parent_id' => null
             ],
             [
                 'name' => 'Personal Development',
                 'description' => 'Improve productivity, communication, and life skills.',
-                'parent_id' => 0
+                'parent_id' => null
             ],
             [
                 'name' => 'Technology & IT',
                 'description' => 'Master IT infrastructure, cybersecurity, and emerging technologies.',
-                'parent_id' => 0
+                'parent_id' => null
             ]
         ];
 

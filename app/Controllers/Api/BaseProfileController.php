@@ -93,7 +93,7 @@ class BaseProfileController extends BaseController
         $profilePicture = $this->request->getFile('profile_picture');
 
         if ($profilePicture && $profilePicture->isValid() && !$profilePicture->hasMoved()) {
-            $uploadResult = $this->updateImage(
+            $uploadResult = $this->updateFile(
                 $profilePicture,
                 $this->user['profile_picture_public_id'],
                 'byway/profile_pictures'

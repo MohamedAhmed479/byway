@@ -7,7 +7,7 @@ use Cloudinary\Cloudinary;
 trait CloudinaryTrait
 {
 
-    protected function uploadImage($file, string $folder = 'byway')
+    protected function uploadFile($file, string $folder = 'byway')
     {
         if (!$file || !$file->isValid() || $file->hasMoved()) {
             return false;
@@ -22,22 +22,41 @@ trait CloudinaryTrait
                 ]
             ]);
 
+            // Get file info for debugging
+            $fileSize = $file->getSize();
+            $fileName = $file->getName();
+            $mimeType = $file->getClientMimeType();
+            
+
+            // Set upload options based on file type
+            $uploadOptions = ["folder" => $folder];
+            
+            // For videos, add specific options
+            if (strpos($mimeType, 'video/') === 0) {
+                $uploadOptions['resource_type'] = 'video';
+                $uploadOptions['chunk_size'] = 6000000; // 6MB chunks for large videos
+            }
+
             $result = $cloudinary->uploadApi()->upload(
                 $file->getTempName(),
-                ["folder" => $folder]
+                $uploadOptions
             );
+
+            log_message('info', "CloudinaryTrait: Upload successful - URL: {$result['secure_url']}");
 
             return [
                 'url' => $result['secure_url'],
                 'public_id' => $result['public_id']
             ];
+        } catch (\Cloudinary\Api\Exception\ApiError $e) {
+            return false;
         } catch (\Exception $e) {
             return false;
         }
     }
 
 
-    protected function deleteImage(string $publicId)
+    protected function deleteFile(string $publicId)
     {
         if (empty($publicId)) {
             return true;
@@ -60,12 +79,12 @@ trait CloudinaryTrait
     }
 
 
-    protected function updateImage($newFile, ?string $oldPublicId = null, string $folder = 'byway')
+    protected function updateFile($newFile, ?string $oldPublicId = null, string $folder = 'byway')
     {
         if (!empty($oldPublicId)) {
-            $this->deleteImage($oldPublicId);
+            $this->deleteFile($oldPublicId);
         }
 
-        return $this->uploadImage($newFile, $folder);
+        return $this->uploadFile($newFile, $folder);
     }
 }
