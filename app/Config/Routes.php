@@ -14,4 +14,6 @@ $routes->group("api", ['namespace' => 'App\Controllers\Api'], function ($routes)
 
     $routes->post("forgot-password", "AuthController::forgotPassword");
     $routes->post("reset-password", "AuthController::resetPassword");
+
+    $routes->post("logout", "AuthController::logout", ["filter" => "authToken"]);
 });

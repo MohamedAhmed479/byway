@@ -77,10 +77,21 @@ class PersonalAccessToken extends Model
      */
     public function findByToken(string $token): ?array
     {
-        return $this->where('token', hash('sha256', $token))
+        $hashedToken = hash('sha256', $token);
+        
+        // First try to find token with expiration check
+        $tokenData = $this->where('token', $hashedToken)
             ->where('expires_at >', date('Y-m-d H:i:s'))
-            ->orWhere('expires_at', null)
             ->first();
+            
+        // If not found, try to find token with null expiration
+        if (!$tokenData) {
+            $tokenData = $this->where('token', $hashedToken)
+                ->where('expires_at', null)
+                ->first();
+        }
+        
+        return $tokenData;
     }
 
     /**
@@ -133,6 +144,54 @@ class PersonalAccessToken extends Model
 
         return [];
     }
+
+
+    /**
+     * Update last used timestamp for token
+     */
+    public function updateLastUsed(int $tokenId): bool
+    {
+        return $this->update($tokenId, ['last_used_at' => date('Y-m-d H:i:s')]);
+    }
+
+    /**
+     * Validate token and get user
+     */
+    public function validateToken(string $token): ?array
+    {
+        try {
+            $tokenData = $this->findByToken($token);
+
+            if (!$tokenData) {
+                return null;
+            }
+
+            // Update last used timestamp
+            $this->updateLastUsed($tokenData['id']);
+
+            // Get user data
+            $userModel = new User();
+            $user = $userModel->find($tokenData['tokenable_id']);
+
+            if (!$user) {
+                return null;
+            }
+
+            // Check if user is active (if the field exists)
+            if (isset($user['is_active']) && !$user['is_active']) {
+                return null;
+            }
+
+            return [
+                'user' => $user,
+                'token' => $tokenData
+            ];
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+
 
 
 }

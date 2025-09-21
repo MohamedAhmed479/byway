@@ -221,4 +221,30 @@ class AuthController extends BaseController
         }
 
     }
+
+    public function logout()
+    {
+        $authHeader = $this->request->getHeaderLine('Authorization');
+
+        if (!$authHeader) {
+            return $this->respondWithError('No token provided', 400);
+        }
+
+        $token = $this->extractTokenFromHeader($authHeader);
+
+        if (!$token) {
+            return $this->respondWithError('Invalid token format', 400);
+        }
+
+        try {
+            if ($this->revokeToken($token)) {
+                return $this->respondWithSuccess(null, 'Logout successful');
+            } else {
+                return $this->respondWithError('Token not found', 404);
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Logout failed: ' . $e->getMessage());
+            return $this->respondWithError('Logout failed', 500);
+        }
+    }
 }

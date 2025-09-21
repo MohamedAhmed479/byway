@@ -30,4 +30,53 @@ Trait Tokenable
 
         return $tokenResult;
     }
+
+    /**
+     * Validate token and return user data
+     */
+    public function validateToken(string $token): ?array
+    {
+        $tokenModel = new PersonalAccessToken();
+
+        return $tokenModel->validateToken($token);
+    }
+
+    /**
+     * Revoke a specific token
+     */
+    public function revokeToken(string $token): bool
+    {
+        $tokenModel = new PersonalAccessToken();
+
+        return $tokenModel->revokeToken($token);
+    }
+
+    /**
+     * Check if token has specific ability
+     */
+    public function hasAbility(array $tokenData, string $ability): bool
+    {
+        $tokenModel = new PersonalAccessToken();
+
+        return $tokenModel->hasAbility($tokenData, $ability);
+    }
+
+    /**
+     * Extract token from request header
+     */
+    public function extractTokenFromHeader(string $authHeader): ?string
+    {
+        // Support both "Bearer token" and "token" formats
+        if (preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
+            return $matches[1];
+        }
+
+        if (preg_match('/^[a-f0-9]{64}$/i', $authHeader)) {
+            return $authHeader;
+        }
+
+        return null;
+    }
+
+
 }
