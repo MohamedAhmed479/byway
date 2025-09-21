@@ -15,7 +15,7 @@ class User extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'name', 'email', 'password', 'role', 'email_verified_at', 
-        'profile_picture', 'bio', 'social_links'
+        'profile_picture', 'profile_picture_public_id', 'bio', 'social_links'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -23,7 +23,7 @@ class User extends Model
 
     protected array $casts = [
         'email_verified_at' => '?datetime',
-        'social_links' => 'json',
+        'social_links' => '?json',
         'created_at' => 'datetime',
         'updated_at' => '?datetime',
         'deleted_at' => '?datetime'
@@ -40,10 +40,11 @@ class User extends Model
     // Validation
     protected $validationRules      = [
         'name' => 'required|min_length[2]|max_length[100]',
-        'email' => 'required|valid_email|max_length[100]|is_unique[users.email,id,{id}]',
+        'email' => 'required|valid_email|max_length[100]',
         'password' => 'required|min_length[8]',
         'role' => 'required|in_list[admin,learner,instructor]',
         'profile_picture' => 'permit_empty|max_length[255]',
+        'profile_picture_public_id' => 'permit_empty|max_length[255]',
         'bio' => 'permit_empty',
         'social_links' => 'permit_empty'
     ];

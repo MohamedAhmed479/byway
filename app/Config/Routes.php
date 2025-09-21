@@ -17,3 +17,41 @@ $routes->group("api", ['namespace' => 'App\Controllers\Api'], function ($routes)
 
     $routes->post("logout", "AuthController::logout", ["filter" => "authToken"]);
 });
+
+
+$routes->group(
+    "api/learner",
+    [
+        'namespace' => 'App\Controllers\Api\Learner',
+        'filter'    => 'authToken'
+    ],
+    function ($routes) {
+        // Learner Routes
+        $routes->get("profile", "LearnerProfileController::profile");
+        $routes->post("update-profile", "LearnerProfileController::updateProfile");
+    }
+);
+
+
+$routes->group(
+    "api/instructor",
+    [
+        'namespace' => 'App\Controllers\Api\Instructor',
+        'filter'    => 'authToken'
+    ],
+    function ($routes) {
+        // Instructor Routes
+        $routes->get("profile", "InstructorProfileController::profile");
+        $routes->post("update-profile", "InstructorProfileController::updateProfile");
+    }
+);
+
+$routes->group(
+    "api/admin",
+    [
+        'namespace' => 'App\Controllers\Api\Admin',
+        'filter'    => 'authToken'
+    ],
+    function ($routes) {
+        // Instructor Routes
+});

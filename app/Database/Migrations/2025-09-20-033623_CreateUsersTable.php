@@ -46,7 +46,7 @@ class CreateUsersTable extends Migration
             ],
             "social_links" => [
                 "type" => "JSON",
-                "default" => json_encode([]),
+                "null" => true
             ],
             "created_at" => [
                 "type" => "DATETIME",

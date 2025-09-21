@@ -45,8 +45,6 @@ class AuthController extends BaseController
                 'role' => $this->request->getJSON(true)['role'] ?? $this->request->getPost('role'),
             ];
 
-            log_message("debug", $userData["password"]);
-
             if ($this->userModel->save($userData)) {
                 $user = $this->userModel->find($this->userModel->getInsertID());
 

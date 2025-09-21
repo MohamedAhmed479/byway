@@ -84,8 +84,8 @@ class TokenAuthFilter implements FilterInterface
             }
 
             // Store user and token data in request for later use
-            $request->setGlobal('user', $result['user']);
-            $request->setGlobal('token', $result['token']);
+            $request->user  = $result['user'];
+            $request->token = $result['token'];
 
         } catch (\Exception $e) {
             log_message('error', 'Token validation error: ' . $e->getMessage());
