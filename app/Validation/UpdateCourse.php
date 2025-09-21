@@ -2,7 +2,7 @@
 
 namespace App\Validation;
 
-class AddNewCourse
+class UpdateCourse
 {
     public function getRules(): array
     {
@@ -13,11 +13,11 @@ class AddNewCourse
             'category_id'  => 'required|numeric|is_not_unique[categories.id]',
             'duration'     => 'permit_empty|numeric|greater_than_equal_to[0]',
             'image_url' => [
-                'rules' => 'uploaded[image_url]|is_image[image_url]|max_size[image_url,2048]|mime_in[image_url,image/jpg,image/jpeg,image/png]',
+                'rules' => 'permit_empty|is_image[image_url]|max_size[image_url,2048]|mime_in[image_url,image/jpg,image/jpeg,image/png]',
                 'label' => 'Course Image'
             ],
             'video_url' => [
-                'rules' => 'uploaded[video_url]|max_size[video_url,20480]|mime_in[video_url,video/mp4,video/mpeg,video/avi,video/quicktime]',
+                'rules' => 'permit_empty|max_size[video_url,20480]|mime_in[video_url,video/mp4,video/mpeg,video/avi,video/quicktime]',
                 'label' => 'Course Video'
             ],
         ];
@@ -49,13 +49,11 @@ class AddNewCourse
                 'greater_than_equal_to' => 'Duration cannot be negative'
             ],
             'image_url' => [
-                'uploaded' => 'Course image is required',
                 'is_image' => 'The file must be a valid image',
                 'max_size' => 'Course image size cannot exceed 2MB',
                 'mime_in'  => 'Course image must be JPG, JPEG, or PNG'
             ],
             'video_url' => [
-                'uploaded' => 'Course video is required',
                 'max_size' => 'Course video size cannot exceed 20MB',
                 'mime_in'  => 'Course video must be MP4, MPEG, AVI, or QuickTime format'
             ],

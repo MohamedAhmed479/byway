@@ -46,11 +46,11 @@ $routes->group(
         // $routes->post("update-password", "InstructorProfileController::updatePassword");
 
         $routes->group("courses", function ($routes) {
+            $routes->post("update/(:num)", "CourseManagementController::updateCourse/$1");
             $routes->get("", "CourseManagementController::index");
-            $routes->get(":id", "CourseManagementController::getCourseDetails");
             $routes->post("add-course", "CourseManagementController::addCourse");
-            $routes->post("update", "CourseManagementController::updateCourse");
-            $routes->post("delete", "CourseManagementController::deleteCourse");
+            $routes->post("delete/(:num)", "CourseManagementController::deleteCourse/$1");
+            $routes->get("(:num)", "CourseManagementController::getCourseDetails/$1");
         });
     }
 );

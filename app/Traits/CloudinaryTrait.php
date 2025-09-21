@@ -71,8 +71,13 @@ trait CloudinaryTrait
                 ]
             ]);
 
+            
             $result = $cloudinary->uploadApi()->destroy($publicId);
+            
+            
             return $result['result'] === 'ok';
+        } catch (\Cloudinary\Api\Exception\ApiError $e) {
+            return false;
         } catch (\Exception $e) {
             return false;
         }
@@ -82,8 +87,8 @@ trait CloudinaryTrait
     protected function updateFile($newFile, ?string $oldPublicId = null, string $folder = 'byway')
     {
         if (!empty($oldPublicId)) {
-            $this->deleteFile($oldPublicId);
-        }
+            $deleteResult = $this->deleteFile($oldPublicId);
+        } 
 
         return $this->uploadFile($newFile, $folder);
     }

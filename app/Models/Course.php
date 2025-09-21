@@ -14,7 +14,8 @@ class Course extends Model
     protected $protectFields    = true;
     protected $allowedFields    = [
         'title', 'description', 'image_url', 'video_url', 'price', 
-        'instructor_id', 'category_id', 'status', 'thumbnail', 'duration'
+        'instructor_id', 'category_id', 'status', 'thumbnail', 'duration',
+        'public_image_id', 'public_video_id'
     ];
 
     protected bool $allowEmptyInserts = false;
