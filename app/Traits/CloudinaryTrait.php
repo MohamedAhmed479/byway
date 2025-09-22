@@ -71,11 +71,16 @@ trait CloudinaryTrait
                 ]
             ]);
 
-            
-            $result = $cloudinary->uploadApi()->destroy($publicId);
-            
-            
-            return $result['result'] === 'ok';
+            // Try deleting as a video first (our lessons use video uploads)
+            $result = $cloudinary->uploadApi()->destroy($publicId, ['resource_type' => 'video', 'type' => 'upload']);
+
+            // If not ok, try default (image) as a fallback
+            if (!isset($result['result']) || ($result['result'] !== 'ok' && $result['result'] !== 'not found')) {
+                $result = $cloudinary->uploadApi()->destroy($publicId, ['type' => 'upload']);
+            }
+
+            // Consider 'ok' and 'not found' as successful (idempotent delete)
+            return isset($result['result']) && in_array($result['result'], ['ok', 'not found'], true);
         } catch (\Cloudinary\Api\Exception\ApiError $e) {
             return false;
         } catch (\Exception $e) {

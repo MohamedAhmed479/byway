@@ -10,7 +10,7 @@ class Course extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+    protected $useSoftDeletes   = true;
     protected $protectFields    = true;
     protected $allowedFields    = [
         'title', 'description', 'image_url', 'video_url', 'price', 
@@ -24,9 +24,9 @@ class Course extends Model
     protected array $casts = [
         'price' => 'float',
         'duration' => 'float',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
+        'created_at' => '?datetime',
+        'updated_at' => '?datetime',
+        'deleted_at' => '?datetime'
     ];
     protected array $castHandlers = [];
 
@@ -51,4 +51,11 @@ class Course extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+
+    public function lessons($courseId)
+    {
+        $lessonModel = new Lesson();
+        return $lessonModel->where('course_id', $courseId)->findAll();
+    }
 }

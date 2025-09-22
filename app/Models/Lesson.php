@@ -13,14 +13,14 @@ class Lesson extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = [
-        'course_id', 'title', 'video_url', 'duration', 'order'
+        'course_id', 'title', 'video_url', 'public_video_id', 'duration', 'order'
     ];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
     protected array $casts = [
-        'duration' => 'decimal',
+        'duration' => 'float',
         'order' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'

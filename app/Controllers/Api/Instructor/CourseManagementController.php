@@ -149,7 +149,7 @@ class CourseManagementController extends BaseController
                 return $this->respondWithError("Course not found or you don't have permission to update it");
             }
 
-            $rules = new AddNewCourse(); 
+            $rules = new AddNewCourse(); // Must use Update !!!!
             $validationRules = $rules->getRules();
             $validationMessages = $rules->getMessages();
 
@@ -266,17 +266,9 @@ class CourseManagementController extends BaseController
                 return $this->respondWithError("Course not found or you don't have permission to delete it");
             }
 
-            // Delete files from Cloudinary
-            if (!empty($existingCourse['public_image_id'])) {
-                $this->deleteFile($existingCourse['public_image_id']);
-            }
-            if (!empty($existingCourse['public_video_id'])) {
-                $this->deleteFile($existingCourse['public_video_id']);
-            }
-
-            // Delete course from database
+            // Soft delete the course (keep media and related enrollments intact)
             if ($this->courseModel->delete($courseId)) {
-                return $this->respondWithSuccess(null, 'Course deleted successfully', 200);
+                return $this->respondWithSuccess(null, 'Course archived successfully', 200);
             } else {
                 return $this->respondWithError('Failed to delete course', 500);
             }
@@ -288,11 +280,103 @@ class CourseManagementController extends BaseController
 
     public function getCourses()
     {
-        //
+        if (!$this->isAuthorize()) {
+            return $this->respondWithError("You must be authorized to view your courses");
+        }
+
+        $page     = (int) ($this->request->getGet('page') ?? 1);
+        $perPage  = (int) ($this->request->getGet('per_page') ?? 10);
+        $perPage  = $perPage > 0 ? $perPage : 10;
+
+        $paginator = $this->courseModel
+            ->where('instructor_id', $this->user["id"]) 
+            ->paginate($perPage, 'default', $page);
+
+        $pager = $this->courseModel->pager;
+
+        return $this->respondWithPagination($paginator, $pager);
     }
 
-    public function getCourseDetails(string $id)
+    public function getCourseDetails(string $courseId)
     {
-        //
+        if (!$this->isAuthorize()) {
+            return $this->respondWithError("You must be authorized to view this course");
+        }
+
+        if (!$courseId) {
+            return $this->respondWithError("Course ID is required");
+        }
+
+        $existingCourse = $this->courseModel->where('id', $courseId)
+            ->where('instructor_id', $this->user["id"])
+            ->first();
+
+        if (!$existingCourse) {
+            return $this->respondWithError("Course not found or you don't have permission to view it");
+        }
+
+        return $this->respondWithSuccess($existingCourse);
+    }
+
+    public function getDeletedCourses()
+    {
+        if (!$this->isAuthorize()) {
+            return $this->respondWithError("You must be authorized to view your courses");
+        }
+
+        $page     = (int) ($this->request->getGet('page') ?? 1);
+        $perPage  = (int) ($this->request->getGet('per_page') ?? 10);
+        $perPage  = $perPage > 0 ? $perPage : 10;
+
+        $paginator = $this->courseModel
+            ->onlyDeleted()
+            ->where('instructor_id', $this->user["id"]) 
+            ->paginate($perPage, 'default', $page);
+
+        $pager = $this->courseModel->pager;
+
+        return $this->respondWithPagination($paginator, $pager);
+    }
+
+    public function restoreCourse($courseId = null)
+    {
+        try {
+            if (!$this->isAuthorize()) {
+                return $this->respondWithError("You must be authorized to restore a course");
+            }
+
+            if (!$courseId) {
+                return $this->respondWithError("Course ID is required");
+            }
+
+            $course = $this->courseModel
+                ->withDeleted()
+                ->where('id', $courseId)
+                ->where('instructor_id', $this->user["id"]) 
+                ->first();
+
+            if (!$course) {
+                return $this->respondWithError("Course not found or you don't have permission to restore it");
+            }
+
+            if (empty($course['deleted_at'])) {
+                return $this->respondWithError("Course is not deleted");
+            }
+
+            $restored = $this->courseModel
+                ->protect(false)
+                ->set('deleted_at', null)
+                ->where('id', $courseId)
+                ->update();
+
+            if ($restored) {
+                $course = $this->courseModel->find($courseId);
+                return $this->respondWithSuccess($course, 'Course restored successfully');
+            }
+
+            return $this->respondWithError('Failed to restore course', 500);
+        } catch (\Throwable $th) {
+            return $this->respondWithError($th->getMessage(), $th->getCode() ?: 500);
+        }
     }
 }

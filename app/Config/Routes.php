@@ -45,12 +45,28 @@ $routes->group(
         $routes->post("update-profile", "InstructorProfileController::updateProfile");
         // $routes->post("update-password", "InstructorProfileController::updatePassword");
 
+        // Course Management
         $routes->group("courses", function ($routes) {
             $routes->post("update/(:num)", "CourseManagementController::updateCourse/$1");
-            $routes->get("", "CourseManagementController::index");
+            $routes->get("", "CourseManagementController::getCourses");
+            $routes->get("deleted", "CourseManagementController::getDeletedCourses");
             $routes->post("add-course", "CourseManagementController::addCourse");
-            $routes->post("delete/(:num)", "CourseManagementController::deleteCourse/$1");
+            $routes->post("restore/(:num)", "CourseManagementController::restoreCourse/$1");
+            $routes->delete("(:num)", "CourseManagementController::deleteCourse/$1");
             $routes->get("(:num)", "CourseManagementController::getCourseDetails/$1");
+        });
+
+        // Lessons Management
+        $routes->group("lessons", function ($routes) {
+            $routes->get("", "LessonsManagementController::getLessons");
+
+            $routes->get("(:num)/(:num)", "LessonsManagementController::getLessonDetails/$1/$2");
+
+            $routes->post("(:num)/add", "LessonsManagementController::addLesson/$1");
+
+            $routes->post("(:num)/(:num)/update", "LessonsManagementController::updateLesson/$1/$2");
+
+            $routes->delete("(:num)/(:num)", "LessonsManagementController::deleteLesson/$1/$2");
         });
     }
 );
